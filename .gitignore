@@ -1,4 +1,5 @@
 node_modules
+db.php
 # Windows thumbnail cache files
 Thumbs.db
 ehthumbs.db

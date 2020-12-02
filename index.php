@@ -8,7 +8,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Shop Homepage - Start Bootstrap Template</title>
+  <title>CSC 350 COVID-19 Store</title>
 
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -20,6 +20,7 @@
 
 <body>
   <?php require 'navbar.php';?>
+  <?php require 'db.php';?>
 
   <!-- Page Content -->
   <div class="container">
@@ -28,11 +29,41 @@
 
       <div class="col-lg-3">
 
-        <h1 class="my-4">Shop Name</h1>
+        <h1 class="my-4">COVID-19 Supply Store</h1>
         <div class="list-group">
-          <a href="#" class="list-group-item">Category 1</a>
+          <?php 
+            $servername = $sn;
+            $username = $un;
+            $password = $pw;
+            $dbname = $dbn;
+
+            // Create connection
+            $conn = new mysqli($servername, $username, $password, $dbname);
+
+            // Check connection
+            if ($conn->connect_error) {
+              die("Connection failed: " . $conn->connect_error);
+            }else{
+              //echo("Connected successfully");
+            }
+
+            $sql = "SELECT Type.name FROM type";
+            $result = $conn->query($sql);
+
+             if ($result->num_rows > 0) {
+                // output data of each row
+                while($row = $result->fetch_assoc())
+                {
+                  echo '<a href="#" class="list-group-item">' . $row["name"] . '</a>';
+                }
+              } else {
+                //no data
+              }
+
+          ?>
+          <!-- <a href="#" class="list-group-item">Category 1</a>
           <a href="#" class="list-group-item">Category 2</a>
-          <a href="#" class="list-group-item">Category 3</a>
+          <a href="#" class="list-group-item">Category 3</a> -->
         </div>
 
       </div>
@@ -68,102 +99,46 @@
         </div>
 
         <div class="row">
+          <?php 
+            $servername = $sn;
+            $username = $un;
+            $password = $pw;
+            $dbname = $dbn;
 
-          <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card h-100">
-              <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
-              <div class="card-body">
-                <h4 class="card-title">
-                  <a href="product.php">Item One</a>
-                </h4>
-                <h5>$24.99</h5>
-                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur!</p>
-              </div>
-              <div class="card-footer">
-                <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
-              </div>
-            </div>
-          </div>
+            // Create connection
+            $conn = new mysqli($servername, $username, $password, $dbname);
 
-          <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card h-100">
-              <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
-              <div class="card-body">
-                <h4 class="card-title">
-                  <a href="product.php">Item Two</a>
-                </h4>
-                <h5>$24.99</h5>
-                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur! Lorem ipsum dolor sit amet.</p>
-              </div>
-              <div class="card-footer">
-                <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
-              </div>
-            </div>
-          </div>
+            // Check connection
+            if ($conn->connect_error) {
+              die("Connection failed: " . $conn->connect_error);
+            }else{
+              //echo("Connected successfully");
+            }
 
-          <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card h-100">
-              <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
-              <div class="card-body">
-                <h4 class="card-title">
-                  <a href="product.php">Item Three</a>
-                </h4>
-                <h5>$24.99</h5>
-                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur!</p>
-              </div>
-              <div class="card-footer">
-                <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
-              </div>
-            </div>
-          </div>
+              $sql = "SELECT Item.item_id,Item.name, Item.quantity,Item.price,Item.description,Type.name type, Item.image FROM Item INNER JOIN Type ON Type.type_id = Item.type_id";
+              $result = $conn->query($sql);
 
-          <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card h-100">
-              <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
-              <div class="card-body">
-                <h4 class="card-title">
-                  <a href="product.php">Item Four</a>
-                </h4>
-                <h5>$24.99</h5>
-                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur!</p>
-              </div>
-              <div class="card-footer">
-                <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card h-100">
-              <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
-              <div class="card-body">
-                <h4 class="card-title">
-                  <a href="product.php">Item Five</a>
-                </h4>
-                <h5>$24.99</h5>
-                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur! Lorem ipsum dolor sit amet.</p>
-              </div>
-              <div class="card-footer">
-                <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card h-100">
-              <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
-              <div class="card-body">
-                <h4 class="card-title">
-                  <a href="product.php">Item Six</a>
-                </h4>
-                <h5>$24.99</h5>
-                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur!</p>
-              </div>
-              <div class="card-footer">
-                <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
-              </div>
-            </div>
-          </div>
+              if ($result->num_rows > 0) {
+                // output data of each row
+                while($row = $result->fetch_assoc())
+                {
+                  echo '<div class="col-lg-4 col-md-6 mb-4">';
+                  echo '<div class="card h-100">';
+                  echo '<a href="#"><img class="card-img-top" src="/CSC-350-COVID-Project/images/'. $row["image"] .'" alt=""></a>';
+                  echo '<div class="card-body" style="height:140px;">';
+                  echo '<h4 class="card-title">';
+                  echo '<a href="product.php?productID='. $row["item_id"] . '">' . $row["name"] . '</a></h4>';
+                  echo '<p class="card-text">' . $row["description"] . '</p>';
+                  echo '<h5>$' . $row["price"] . '</h5>';
+                  echo '</div></div></div>';
+                  // echo "Name: " . $row["name"]. " - Quantity: " . $row["quantity"]. " - Price: " . $row["price"]. " - Type: " . $row["type"]. "<br>";
+                }
+              } else {
+                echo "0 results";
+              }
+              $conn->close();
+          ?>
+      
 
         </div>
         <!-- /.row -->

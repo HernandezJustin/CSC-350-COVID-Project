@@ -29,11 +29,11 @@
 
       <div class="col-lg-3">
         <h1 class="my-4">Shop Name</h1>
-        <div class="list-group">
+        <!-- <div class="list-group">
           <a href="#" class="list-group-item active">Category 1</a>
           <a href="#" class="list-group-item">Category 2</a>
           <a href="#" class="list-group-item">Category 3</a>
-        </div>
+        </div> -->
       </div>
       <!-- /.col-lg-3 -->
 
@@ -42,11 +42,38 @@
         <div class="card mt-4">
           <img class="card-img-top img-fluid" src="http://placehold.it/900x400" alt="">
           <div class="card-body">
-            <h3 class="card-title">Product Name</h3>
-            <h4>$24.99</h4>
-            <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente dicta fugit fugiat hic aliquam itaque facere, soluta. Totam id dolores, sint aperiam sequi pariatur praesentium animi perspiciatis molestias iure, ducimus!</p>
-            <span class="text-warning">&#9733; &#9733; &#9733; &#9733; &#9734;</span>
-            4.0 stars
+            <?php 
+              $servername = "localhost";
+              $username = "root";
+              $password = "";
+              $dbname = "csc350_covid_store";
+
+              // Create connection
+              $conn = new mysqli($servername, $username, $password, $dbname);
+
+              // Check connection
+              if ($conn->connect_error) {
+                die("Connection failed: " . $conn->connect_error);
+              }else{
+                //echo("Connected successfully");
+              }
+              if(isset($_GET['productID'])){
+                $productID = $_GET['productID'];
+                $sql = "SELECT Item.item_id, Item.name, Item.quantity,Item.price,Item.description,Type.name type FROM Item INNER JOIN Type ON Type.type_id = Item.type_id WHERE Item.item_id=" . $productID;
+                $result = $conn->query($sql);
+
+                if ($result->num_rows > 0) {
+                  // output data of each row
+                  while($row = $result->fetch_assoc()) {
+                  echo '<h3 class="card-title">' .$row['name'] . '</h3>';
+                  echo '<h4>$'.$row['price'].'</h4>';
+                  if($row['description']) echo '<p class="card-text">' . $row['description'] . '</p>';
+                  // echo <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente dicta fugit fugiat hic aliquam itaque facere, soluta. Totam id dolores, sint aperiam sequi pariatur praesentium animi perspiciatis molestias iure, ducimus!</p>
+                  echo '<span class="text-warning">&#9733; &#9733; &#9733; &#9733; &#9734;</span>4.0 stars';
+                  }
+                }
+              } else die("URL Query Param Failed");
+            ?>
           </div>
         </div>
         <!-- /.card -->
