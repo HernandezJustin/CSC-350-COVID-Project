@@ -31,6 +31,7 @@
 
         <h1 class="my-4">COVID-19 Supply Store</h1>
         <div class="list-group">
+          <a href="#" class="list-group-item" data-target="all">All Products</a>
           <?php 
             $servername = $sn;
             $username = $un;
@@ -47,15 +48,16 @@
               //echo("Connected successfully");
             }
 
-            $sql = "SELECT Type.name FROM type";
+            $sql = "SELECT * FROM type";
             $result = $conn->query($sql);
 
              if ($result->num_rows > 0) {
                 // output data of each row
                 while($row = $result->fetch_assoc())
                 {
-                  echo '<a href="#" class="list-group-item">' . $row["name"] . '</a>';
+                  echo '<a href="#" class="list-group-item" data-target="multi-collapse' .$row["type_id"].  '">' . $row["name"] . '</a>';
                 }
+                //data-toggle="collapse"
               } else {
                 //no data
               }
@@ -115,15 +117,17 @@
               //echo("Connected successfully");
             }
 
-              $sql = "SELECT Item.item_id,Item.name, Item.quantity,Item.price,Item.description,Type.name type, Item.image FROM Item INNER JOIN Type ON Type.type_id = Item.type_id";
+              $sql = "SELECT Item.item_id, Item.type_id, Item.name, Item.quantity,Item.price,Item.description,Type.name type, Item.image FROM Item INNER JOIN Type ON Type.type_id = Item.type_id";
+              //echo '<div class="card-deck">';
               $result = $conn->query($sql);
 
               if ($result->num_rows > 0) {
                 // output data of each row
+
                 while($row = $result->fetch_assoc())
                 {
                   echo '<div class="col-lg-4 col-md-6 mb-4">';
-                  echo '<div class="card h-100">';
+                  echo '<div class="card h-100 collapse show multi-collapse' . $row["type_id"] . '">';
                   echo '<a href="#"><img class="card-img-top" src="/CSC-350-COVID-Project/images/'. $row["image"] .'" alt=""></a>';
                   echo '<div class="card-body" style="height:140px;">';
                   echo '<h4 class="card-title">';
@@ -138,8 +142,6 @@
               }
               $conn->close();
           ?>
-      
-
         </div>
         <!-- /.row -->
 
@@ -163,6 +165,31 @@
   <!-- Bootstrap core JavaScript -->
   <script src="vendor/jquery/jquery.min.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script type="text/javascript">
+    //toggle list item visibility by category
+    $('.list-group-item').on('click', function(){
+      var targetAttr = $(this).attr("data-target");
+      
+      if(targetAttr == "all"){
+        $('.card').fadeIn("slow", function(){
+          $('.card').parent().removeClass("d-none");
+        });
+        return;
+      } else {
+        $('.card').each(function(index){
+          if (!$(this).hasClass(targetAttr)){
+            $(this).fadeOut("slow", function(){
+              $(this.parentNode).addClass("d-none");
+            });  
+          } else {
+            $(this).fadeIn("slow", function(){
+              $(this.parentNode).removeClass("d-none");
+            });
+          }
+        });
+      }
+    });
+  </script>
 
 </body>
 
