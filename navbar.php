@@ -15,8 +15,15 @@
           <li class="nav-item">
             <a class="nav-link" href="about.php">About</a>
           </li>
+          
           <li class="nav-item">
-            <a class="nav-link" href="login.php">Login</a>
+            <?php
+              if(isset($_SESSION["email"])){
+                echo '<a class="nav-link" id="logout" href="logout.php">Logout</a>';
+              } else {
+                echo '<a class="nav-link" href="login.php">Login</a>';
+              }
+            ?>
           </li>
           
             <!-- Search form -->
