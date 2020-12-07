@@ -22,34 +22,82 @@
 
 <?php
 
-// require('db.php');
-// // If form submitted, insert values into the database.
-// if (isset($_REQUEST['username'])){
-//         // removes backslashes
-// 	$username = stripslashes($_REQUEST['username']);
-//         //escapes special characters in a string
-// 	$username = mysqli_real_escape_string($con,$username); 
-// 	$email = stripslashes($_REQUEST['email']);
-// 	$email = mysqli_real_escape_string($con,$email);
-// 	$password = stripslashes($_REQUEST['password']);
-// 	$password = mysqli_real_escape_string($con,$password);
-// 	$trn_date = date("Y-m-d H:i:s");
-//         $query = "INSERT into `users` (username, password, email, trn_date)
-// VALUES ('$username', '".md5($password)."', '$email', '$trn_date')";
-//         $result = mysqli_query($con,$query);
-//         if($result){
-// // 301 Moved Permanently
-// exit(); }
-//          else{
-//  echo "<div class='form'> <h3>You are registered successfully.</h3>
-// <br/>Click here to <a href='index.html'>Login</a></div>";
-//     }
+require('db.php');
+
+$email = $password = $full_name = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  $email = $_POST["email"];
+  $full_name = $_POST["full-name"];
+  $customerpw = $_POST["password"];
+
+  $encrypted_pw = hash("sha256", $customerpw);
+  $space = strpos($full_name, " ");
+  $first_name = substr($full_name, 0, $space);
+  $last_name = substr($full_name, $space);
+  // echo '<h1>Email: ' . $email . ' Full Name: ' . $full_name . 'Password: ' . $password .'</h1>';
+
+  // echo $encrypted_pw;
+  //echo $first_name . " " . $last_name;
+  $servername = $sn;
+  $username = $un;
+  $password = $pw;
+  $dbname = $dbn;
+
+  // Create connection
+  $conn = new mysqli($servername, $username, $password, $dbname);
+
+  // Check connection
+  if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+  }else{
+    //echo("Connected successfully");
+  }
+    //check if the email exists
+    $sql = "SELECT * FROM Customer WHERE Customer.email = \"$email\"";
+
+    //echo $sql;
+
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+      // output data of each row
+      while($row = $result->fetch_assoc())
+      {
+        //Email Found
+        //display alert
+        echo '<div class="alert alert-danger" role="alert">Email already in use</div>';
+      }
+    } else {
+      //Email not found
+      //insert into db
+      $sql2 = "INSERT INTO Customer (first_name, last_name, email, password) VALUES (\"$first_name\", \"$last_name\", \"$email\", \"$encrypted_pw\")";
+
+      $result = $conn->query($sql2);
+
+      //setcookie($email, $encrypted_pw, time() + (86400), "/");
+      header("refresh:5;url=http://localhost/CSC-350-COVID-Project/login.php");
+      echo '<div class="alert alert-success" role="alert">Account Created, Redirecting to Login Page...</div>';
+      //header("Location: http://localhost/CSC-350-COVID-Project/index.php");
+      //echo '<div class="alert alert-success" role="alert">Account Created</div>';
+    }
+
+    //$row = $result->fetch_assoc();
+
+    
+    //if the email doesnt exist, add the Customer
+   
+
+    //echo '<div class="card-deck">';
+    
+    $conn->close();
+}
 ?>
   
 <div class="container">
   <div class="login-box">
 <h1>Registration</h1>
-<form name="registration" action="" method="post">
+<form name="registration" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
  <label for="full-name">Full Name</label>
 <input type="text" name="full-name" placeholder="Name" required />
  <label for="password">Email</label>

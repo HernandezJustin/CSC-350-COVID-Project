@@ -1,3 +1,4 @@
+<?php //session_start(); ?>
 <!DOCTYPE html>
 <html>
   <head>
@@ -16,40 +17,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
+  <?php require 'navbar.php';?>
   <?php
     require 'db.php';
+
     /* Database credentials. Assuming you are running MySQL
     server with default setting (user 'root' with no password) */
-    $servername = $sn;
-    $username = $un;
-    $password = $pw;
-    $dbname = $dbn;
-    /* Attempt to connect to MySQL database */
-    $conn = new mysqli($servername, $username, $password, $dbname);
+    $email = $customerpw = "";
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+      $email = $_POST["email"];
+      $customerpw = $_POST["password"];
+      
+      $encrypted_pw = hash("sha256", $customerpw);
 
-    // Check connection
-    if($conn === false){
-        die("ERROR: Could not connect. " . mysqli_connect_error());
+      $servername = $sn;
+      $username = $un;
+      $password = $pw;
+      $dbname = $dbn;
+      /* Attempt to connect to MySQL database */
+      $conn = new mysqli($servername, $username, $password, $dbname);
+
+      // Check connection
+      if($conn === false){
+          die("ERROR: Could not connect. " . mysqli_connect_error());
+      }
+
+      $sql = "SELECT * FROM Customer WHERE Customer.email = \"$email\" AND Customer.password = \"$encrypted_pw\"";
+      $result = $conn->query($sql);
+
+      if ($result->num_rows > 0) {
+        // login found
+        while($row = $result->fetch_assoc())
+        {
+          session_start();
+          $_SESSION["email"] = $email;
+          //$_SESSION["encrypted_pw"] = $encrypted_pw;
+          //setcookie($email, $encrypted_pw, time() + (86400), "/");
+          //header("Location: http://localhost/CSC-350-COVID-Project/index.php");
+          header("refresh:5;url=http://localhost/CSC-350-COVID-Project/index.php");
+          echo '<div class="alert alert-success" role="alert">Logged in, Redirecting to Home Page...</div>';
+        }
+      } else {
+        //login not found
+        //invalid username or password
+        echo '<div class="alert alert-danger" role="alert">Invalid username or password</div>';
+      }
     }
   ?>
 
-  <?php require 'navbar.php';?>
+ 
 
   <div class="container">
     <div class="login-box">
     <!-- <img src="logo.png" class="avatar" alt="Avatar Image">-->      
       <h1>Login</h1>
-      <form>
+      <form name="login" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
         <!-- USERNAME INPUT -->
 
         <label for="email">Email</label>
-        <input type="text" placeholder="Enter Email">
+        <input type="text" name="email" placeholder="Enter Email">
         <!-- PASSWORD INPUT -->
         <label for="password">Password</label>
-        <input type="password" placeholder="Enter Password">
-        <input type="submit" value="Log In">
+        <input type="password" name="password" placeholder="Enter Password">
+        <input type="submit" name="submit" value="Log In">
         <a href="Register.php">Don't have An account?</a>
-
       </form>
 
     </div>
