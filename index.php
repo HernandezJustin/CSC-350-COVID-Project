@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,6 +17,8 @@
   <!-- Custom styles for this template -->
   <link href="css/shop-homepage.css" rel="stylesheet">
 
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
@@ -29,10 +32,11 @@
 
       <div class="col-lg-3">
 
-        <h1 class="my-4">COVID-19 Supply Store</h1>
+        <h1 class="my-4">Categories</h1>
         <div class="list-group">
           <a href="#" class="list-group-item" data-target="all">All Products</a>
-          <?php 
+          <?php
+            //session_start(); 
             $servername = $sn;
             $username = $un;
             $password = $pw;
@@ -51,7 +55,7 @@
             $sql = "SELECT * FROM type";
             $result = $conn->query($sql);
 
-             if ($result->num_rows > 0) {
+              if ($result->num_rows > 0) {
                 // output data of each row
                 while($row = $result->fetch_assoc())
                 {
@@ -63,42 +67,13 @@
               }
 
           ?>
-          <!-- <a href="#" class="list-group-item">Category 1</a>
-          <a href="#" class="list-group-item">Category 2</a>
-          <a href="#" class="list-group-item">Category 3</a> -->
         </div>
 
       </div>
       <!-- /.col-lg-3 -->
 
       <div class="col-lg-9">
-
-        <div id="carouselExampleIndicators" class="carousel slide my-4" data-ride="carousel">
-          <ol class="carousel-indicators">
-            <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-            <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-            <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-          </ol>
-          <div class="carousel-inner" role="listbox">
-            <div class="carousel-item active">
-              <img class="d-block img-fluid" src="http://placehold.it/900x350" alt="First slide">
-            </div>
-            <div class="carousel-item">
-              <img class="d-block img-fluid" src="http://placehold.it/900x350" alt="Second slide">
-            </div>
-            <div class="carousel-item">
-              <img class="d-block img-fluid" src="http://placehold.it/900x350" alt="Third slide">
-            </div>
-          </div>
-          <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-          </a>
-          <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-          </a>
-        </div>
+        <h1 class="my-4" style="text-align: center;">COVID-19 Supply Store</h1>
 
         <div class="row">
           <?php 
@@ -133,7 +108,13 @@
                   echo '<h4 class="card-title">';
                   echo '<a href="product.php?productID='. $row["item_id"] . '">' . $row["name"] . '</a></h4>';
                   echo '<p class="card-text">' . $row["description"] . '</p>';
-                  echo '<h5>$' . $row["price"] . '</h5>';
+                  if(isset($_SESSION["email"])){
+                    $regPrice = $row["price"];
+                    $discPrice = $regPrice - (number_format(($regPrice/10), 2));
+                    echo '<h5>$' . $discPrice . '</h5>';
+                  } else {
+                    echo '<h5>$' . $row["price"] . '</h5>';
+                  }        
                   echo '</div></div></div>';
                   // echo "Name: " . $row["name"]. " - Quantity: " . $row["quantity"]. " - Price: " . $row["price"]. " - Type: " . $row["type"]. "<br>";
                 }
@@ -142,6 +123,7 @@
               }
               $conn->close();
           ?>
+
         </div>
         <!-- /.row -->
 
@@ -157,14 +139,13 @@
   <!-- Footer -->
   <footer class="py-5 bg-dark">
     <div class="container">
-      <p class="m-0 text-center text-white">Copyright &copy; Your Website 2020</p>
+      <p class="m-0 text-center text-white">Copyright &copy; Fall 2020 <br/> By: Group 1 CSC-350 </p>
     </div>
     <!-- /.container -->
   </footer>
 
   <!-- Bootstrap core JavaScript -->
-  <script src="vendor/jquery/jquery.min.js"></script>
-  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  
   <script type="text/javascript">
     //toggle list item visibility by category
     $('.list-group-item').on('click', function(){
