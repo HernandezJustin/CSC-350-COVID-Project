@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,13 +9,24 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>CSC 350 COVID-19 Store</title>
+  <title>CSC 350 COVID-19 Store - View Product</title>
 
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
   <!-- Custom styles for this template -->
   <link href="css/shop-item.css" rel="stylesheet">
+  <style>
+    .img-thumbnail{
+      height: 252px;
+      width: 252px;
+      margin: auto;
+    }
+
+    .card-body{
+      text-align: center;
+    }
+  </style>
 
 </head>
 
@@ -31,12 +43,11 @@
         <h1 class="my-4">COVID-19 Supply Store</h1>
       </div>
       <!-- /.col-lg-3 -->
+      
+        <div class="col-md-6">
+          <form name="addCart" method="post" action="addCart.php">
+          <div class="card mt-4">
 
-      <div class="col-lg-9">
-
-        <div class="card mt-4">
-          <img class="card-img-top img-fluid" src="http://placehold.it/900x400" alt="">
-          <div class="card-body">
             <?php 
               $servername = "localhost";
               $username = "root";
@@ -52,46 +63,77 @@
               }else{
                 //echo("Connected successfully");
               }
+
+              //product id from GET request
               if(isset($_GET['productID'])){
                 $productID = $_GET['productID'];
-                $sql = "SELECT Item.item_id, Item.name, Item.quantity,Item.price,Item.description,Type.name type FROM Item INNER JOIN Type ON Type.type_id = Item.type_id WHERE Item.item_id=" . $productID;
-                $result = $conn->query($sql);
+                //retrieve product information
+                $sql_select_product = "SELECT Item.item_id, Item.name, Item.stock_quantity, Item.price,Item.description, Item.image,Type.name type FROM Item INNER JOIN Type ON Type.type_id = Item.type_id WHERE Item.item_id=" . $productID;
+                $result = $conn->query($sql_select_product);
 
+                //if the item was found
                 if ($result->num_rows > 0) {
-                  // output data of each row
-                  while($row = $result->fetch_assoc()) {
+                  $row = $result->fetch_assoc();
+                  echo '<img class="card-img-top img-thumbnail" src="images/' . $row['image'] . '" alt="">';
+                  echo '<div class="card-body">';
                   echo '<h3 class="card-title">' .$row['name'] . '</h3>';
-                  echo '<h4>$'.$row['price'].'</h4>';
-                  if($row['description']) echo '<p class="card-text">' . $row['description'] . '</p>';
-                  // echo <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente dicta fugit fugiat hic aliquam itaque facere, soluta. Totam id dolores, sint aperiam sequi pariatur praesentium animi perspiciatis molestias iure, ducimus!</p>
-                  // echo '<span class="text-warning">&#9733; &#9733; &#9733; &#9733; &#9734;</span>4.0 stars';
+
+                  //if the user is logged in, show the discounted price; otherwise show the regular price
+                  if(isset($_SESSION["email"])){
+                    $regPrice = $row["price"];
+                    $finalPrice = $regPrice - (number_format(($regPrice/10), 2));
+                    echo '<h4>$' . $finalPrice . '</h4>';
+                  } else {
+                    $finalPrice = $row["price"];
+                    echo '<h4>$' . $row["price"] . '</h4>';
                   }
+                  echo '<h4>Units in Stock: ' . $row['stock_quantity'] . '</h4>';
+                  //hidden fields to post item_id and price information
+                  echo '<input type="hidden" name="itemID" value="' . $row["item_id"] . '">';
+                  echo '<input type="hidden" name="price" value="' . $finalPrice . '">';
+                  echo '<div class="card card-outline-secondary my-4">';
+                  echo '<div class="card-header">Product Description</div>';
+                  if($row['description']) echo '<div class="card-body">' . $row['description'] . '</div></div>';
+                  if(isset($_SESSION["order_id"])){
+                    //pending order exists
+                    $sql_carted_quantity = "SELECT CartedItem.quantity FROM CartedItem WHERE CartedItem.item_id=" . $productID . " AND CartedItem.order_id=" . $_SESSION["order_id"];
+                    $result2 = $conn->query($sql_carted_quantity);
+                    if($result2->num_rows > 0){
+                      //item is in cart
+                      $row2 = $result2->fetch_assoc();
+                      echo '<div><label for="quantity">Quantity:</label>&nbsp&nbsp';
+                      echo '<input type="number" id="updateQuantity" name="updateQuantity" value="'. $row2['quantity'] . '" min="1" max="' . $row['stock_quantity'] . '">';
+                      echo '&nbsp&nbsp<input class="btn btn-primary" type="submit" name="updateCart" value="Update Cart"></div><br/><br/>';
+                      echo '<input class="btn btn-danger" type="submit" name="removeFromCart" style="margin-right:15px;" value="Remove from Cart">';
+                    } else {
+                      //item is not in cart
+                      echo '<label for="quantity">Quantity:</label>&nbsp&nbsp';
+                      echo '<input type="number" id="quantity" name="quantity" value="1" min="1" max="' . $row['stock_quantity'] . '"><br/><br/>';
+                      if($row['stock_quantity'] > 0){
+                        echo '<input class="btn btn-success" type="submit" name="addToCart" value="Add to Cart">';
+                      } else {
+                        echo '<input class="btn btn-success" type="submit" name="addToCart" value="Add to Cart" disabled>';
+                      }
+                    }
+                  } else {
+                    //New order (last order was complete or first )
+                    echo '<label for="quantity">Quantity:</label>&nbsp&nbsp';
+                    echo '<input type="number" id="quantity" name="quantity" value="1" min="1" max="' . $row['stock_quantity'] . '"><br/><br/>';
+                    if($row['stock_quantity'] > 0){
+                        echo '<input class="btn btn-success" type="submit" name="addToCart" value="Add to Cart">';
+                      } else {
+                        echo '<input class="btn btn-success" type="submit" name="addToCart" value="Add to Cart" disabled>';
+                      }
+                  }
+                
                 }
               } else die("URL Query Param Failed");
+              $conn->close();
             ?>
           </div>
-        </div>
-        <!-- /.card -->
-
-        <div class="card card-outline-secondary my-4">
-          <div class="card-header">
-            Product Description
-          </div>
-          <!-- <div class="card-body">
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>
-            <small class="text-muted">Posted by Anonymous on 3/1/17</small>
-            <hr>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>
-            <small class="text-muted">Posted by Anonymous on 3/1/17</small>
-            <hr>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>
-            <small class="text-muted">Posted by Anonymous on 3/1/17</small>
-            <hr>
-            <a href="#" class="btn btn-success">Leave a Review</a>
-          </div> -->
-        </div>
-        <!-- /.card -->
-        <a href="#" class="btn btn-success">Add to Cart</a>
+          </form>
+       </div>
+        
       </div>
       <!-- /.col-lg-9 -->
 
@@ -103,7 +145,7 @@
   <!-- Footer -->
   <footer class="py-5 bg-dark">
     <div class="container">
-      <p class="m-0 text-center text-white">Copyright &copy; Your Website 2020</p>
+      <p class="m-0 text-center text-white">Copyright &copy; Fall 2020 <br/> By: Group 1 CSC-350 </p>
     </div>
     <!-- /.container -->
   </footer>
@@ -111,6 +153,7 @@
   <!-- Bootstrap core JavaScript -->
   <script src="vendor/jquery/jquery.min.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
 
 </body>
 
