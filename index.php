@@ -9,7 +9,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>CSC 350 COVID-19 Store</title>
+  <title>CSC 350 COVID-19 Store - Home</title>
 
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -92,8 +92,7 @@
               //echo("Connected successfully");
             }
 
-              $sql = "SELECT Item.item_id, Item.type_id, Item.name, Item.quantity,Item.price,Item.description,Type.name type, Item.image FROM Item INNER JOIN Type ON Type.type_id = Item.type_id";
-              //echo '<div class="card-deck">';
+              $sql = "SELECT Item.item_id, Item.type_id, Item.name, Item.stock_quantity,Item.price,Item.description,Type.name type, Item.image FROM Item INNER JOIN Type ON Type.type_id = Item.type_id";
               $result = $conn->query($sql);
 
               if ($result->num_rows > 0) {
@@ -103,11 +102,11 @@
                 {
                   echo '<div class="col-lg-4 col-md-6 mb-4">';
                   echo '<div class="card h-100 collapse show multi-collapse' . $row["type_id"] . '">';
-                  echo '<a href="#"><img class="card-img-top" src="/CSC-350-COVID-Project/images/'. $row["image"] .'" alt=""></a>';
+                  echo '<a href="#"><img class="card-img-top" src="images/'. $row["image"] .'" alt=""></a>';
                   echo '<div class="card-body" style="height:140px;">';
                   echo '<h4 class="card-title">';
                   echo '<a href="product.php?productID='. $row["item_id"] . '">' . $row["name"] . '</a></h4>';
-                  echo '<p class="card-text">' . $row["description"] . '</p>';
+                  // echo '<p class="card-text">' . $row["description"] . '</p>';
                   if(isset($_SESSION["email"])){
                     $regPrice = $row["price"];
                     $discPrice = $regPrice - (number_format(($regPrice/10), 2));
@@ -116,7 +115,6 @@
                     echo '<h5>$' . $row["price"] . '</h5>';
                   }        
                   echo '</div></div></div>';
-                  // echo "Name: " . $row["name"]. " - Quantity: " . $row["quantity"]. " - Price: " . $row["price"]. " - Type: " . $row["type"]. "<br>";
                 }
               } else {
                 echo "0 results";
