@@ -9,7 +9,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Shop Homepage - Start Bootstrap Template</title>
+  <title>CSC 350 COVID-19 Store - About</title>
 
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -23,7 +23,6 @@
 
 <body>
 	<?php require 'navbar.php'; ?>
-  <!-- <div class="col-lg-3"></div> -->
   <div class="website-about">
   <h1>About The Website</h1><br/>
   <h3>“Your health remains our priority”</h3>
@@ -91,16 +90,14 @@
   }
   .covid-faq{
     text-align: center;
-    /*width: 600px;*/
   }
   .website-about{
     text-align: center;
-   /* width:600px;*/
   }
   
 </style>
 <script>
-  let biographies = ["Hello, my name is Yasmeen Othman. I’m a computer science student at BMCC. I’m experienced in HTML,CSS, jQuery, and C++.", "Hello, my name is Mohamed Alzendani, and I'm a BMCC student majoring in computer science. Currently, I'm attending the Year Up program. Year Up is a one-year-long program that targets young youth to obtain and develop demanded skills to acclimate the professional field. I'm proficient at C++, Html, CSS, Bootstrap, and MYSQL.", "Hi, this is Khairul Fahim. I am majoring in computer science at BMCC and planning to accomplish an associate’s degree by the end of the Fall 2020 semester. I am proficient at C++, HTML, SQL, and PHP.", "Hi im Justin"];
+  let biographies = ["Hello, my name is Yasmeen Othman. I’m a computer science student at BMCC. I’m experienced in HTML,CSS, jQuery, and C++.", "Hello, my name is Mohamed Alzendani, and I'm a BMCC student majoring in computer science. Currently, I'm attending the Year Up program. Year Up is a one-year-long program that targets young youth to obtain and develop demanded skills to acclimate the professional field. I'm proficient at C++, Html, CSS, Bootstrap, and MYSQL.", "Hi, this is Khairul Fahim. I am majoring in computer science at BMCC and planning to accomplish an associate’s degree by the end of the Fall 2020 semester. I am proficient at C++, HTML, SQL, and PHP.", "Hello, my name is Justin Hernandez. I am majoring in Computer Science at BMCC. In the future, I want to explore areas of CS such as AI/Machine Learning. I have experience in full-stack web development (HTML,CSS,JS), Git, SQL, C++, Java acquired over six years."];
 
   
 
